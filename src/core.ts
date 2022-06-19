@@ -4,17 +4,17 @@ import {
 
 import type { Ref } from 'vue';
 import type { ComposableCreationOptions } from './types/composableCreation';
-import type { PaginatedRequestMethod, PaginatedRequestOptions } from './types/requests';
+import type { PaginatedRequestMethod } from './types/requests';
 
 export const createResourcePaginationComposable = (
   composableOptions: ComposableCreationOptions,
 ) => {
   const FRONTEND_PAGE_SIZE = composableOptions.frontend.pageSize;
-  const BACKEND_PAGE_SIZE = composableOptions.backend.pageSize;
-  const BACKEND_PAGE_REQUEST_KEY = composableOptions.backend.requestKeys?.page || 'page';
-  const BACKEND_PAGE_SIZE_REQUEST_KEY = composableOptions.backend.requestKeys?.pageSize || 'size';
+  const BACKEND_PAGE_SIZE = composableOptions.backend?.pageSize;
+  const BACKEND_PAGE_REQUEST_KEY = composableOptions.backend?.requestKeys?.page || 'page';
+  const BACKEND_PAGE_SIZE_REQUEST_KEY = composableOptions.backend?.requestKeys?.pageSize || 'size';
 
-  return <ElementType, OptionsType extends PaginatedRequestOptions>(
+  return <ElementType, OptionsType>(
     paginatedRequestMethod: PaginatedRequestMethod<ElementType, OptionsType>,
     page: Ref<number>,
     resetPage: () => void,
@@ -48,8 +48,8 @@ export const createResourcePaginationComposable = (
       loading.value = true;
       backendPage.value += 1;
       const internalRequestOptions = {
-        [BACKEND_PAGE_SIZE_REQUEST_KEY]: backendPage.value,
-        [BACKEND_PAGE_REQUEST_KEY]: BACKEND_PAGE_SIZE,
+        [BACKEND_PAGE_REQUEST_KEY]: backendPage.value,
+        [BACKEND_PAGE_SIZE_REQUEST_KEY]: BACKEND_PAGE_SIZE,
         ...requestOptions,
       };
       const {

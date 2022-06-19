@@ -1,8 +1,6 @@
-export type PaginatedRequestOptions = Record<string, unknown>
-
 export type PaginatedRequestMethod<
   ElementType,
-  OptionsType extends PaginatedRequestOptions,
+  OptionsType,
 > = (options: OptionsType) => Promise<{
   total: number,
   elements: Array<ElementType>,

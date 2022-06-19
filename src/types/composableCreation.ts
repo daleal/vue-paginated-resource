@@ -2,7 +2,7 @@ export interface ComposableCreationOptions {
   frontend: {
     pageSize: number,
   },
-  backend: {
+  backend?: {
     pageSize?: number,
     requestKeys?: {
       /** @defaultValue 'page' */
