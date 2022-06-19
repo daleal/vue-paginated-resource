@@ -6,7 +6,7 @@ import type { Ref } from 'vue';
 import type { ComposableCreationOptions } from './types/composableCreation';
 import type { PaginatedRequestMethod } from './types/requests';
 
-export const createResourcePaginationComposable = (
+export const createPaginatedResourceComposable = (
   composableOptions: ComposableCreationOptions,
 ) => {
   const FRONTEND_PAGE_SIZE = composableOptions.frontend.pageSize;

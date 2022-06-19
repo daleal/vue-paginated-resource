@@ -20,9 +20,9 @@ Please note that **Vue Paginated Resource** will only work with **Vue 3**.
 
 ```ts
 // composables/paginatedResource.ts
-import { createResourcePaginationComposable } from 'vue-paginated-resource';
+import { createPaginatedResourceComposable } from 'vue-paginated-resource';
 
-export const usePaginatedResource = createResourcePaginationComposable({
+export const usePaginatedResource = createPaginatedResourceComposable({
   frontend: {
     pageSize: 15,
   },
