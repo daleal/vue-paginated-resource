@@ -31,7 +31,10 @@ export const createResourcePaginationComposable = (
     const nextElement = computed(() => FRONTEND_PAGE_SIZE * page.value);
     const remainingElements = computed(() => elements.value.length - nextElement.value);
     const previousPageAvailable = computed(() => page.value > 1);
-    const nextPageAvailable = computed(() => !loading.value && (nextElement.value < total.value));
+    const nextPageAvailable = computed(() => (
+      (!loading.value || (nextElement.value < elements.value.length))
+      && (nextElement.value < total.value)
+    ));
     const pageLimits = computed(() => ({
       firstElement: firstElement.value,
       lastElement: Math.min(
@@ -75,7 +78,7 @@ export const createResourcePaginationComposable = (
     watch(() => page.value, () => {
       if (
         elements.value.length > 0
-        && (remainingElements.value < FRONTEND_PAGE_SIZE)
+        && (remainingElements.value < (2 * FRONTEND_PAGE_SIZE))
         && elements.value.length < total.value
       ) {
         requestNextPage();
