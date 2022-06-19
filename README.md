@@ -2,13 +2,27 @@
 
 The pagination library designed for living beings
 
+## Installation
+
+Install using npm! (or your favourite package manager)
+
+```sh
+# Using npm
+npm install vue-paginated-resource
+
+# Using yarn
+yarn add vue-paginated-resource
+```
+
+Please note that **Vue Paginated Resource** will only work with **Vue 3**.
+
 ## Sample Usage
 
 ```ts
 // composables/paginatedResource.ts
-import { createResourcePaginationComposable } from 'vue-paginated-resource';
+import { createPaginatedResourceComposable } from 'vue-paginated-resource';
 
-export const usePaginatedResource = createResourcePaginationComposable({
+export const usePaginatedResource = createPaginatedResourceComposable({
   frontend: {
     pageSize: 15,
   },
