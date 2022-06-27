@@ -1,6 +1,7 @@
 import {
   computed, ref, shallowRef, watch,
 } from 'vue';
+import { keysOf } from '@/utils';
 
 import type { Ref } from 'vue';
 import type { ComposableCreationOptions } from './types/composableCreation';
@@ -68,7 +69,7 @@ export const createPaginatedResourceComposable = (
       loading.value = false;
     };
 
-    watch(() => requestOptions, () => {
+    watch(keysOf(requestOptions).map((key) => () => requestOptions[key]), () => {
       elements.value = [];
       backendPage.value = 0;
       resetPage();
