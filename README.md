@@ -49,8 +49,7 @@ interface Element { // Element from the API
 }
 
 interface Params {
-  page?: number,
-  size?: number,
+  // API-related params, should be passed into the composable params
   search: string,
 
   // page-related params, don't get passed into the composable params
