@@ -52,6 +52,10 @@ interface Params {
   page?: number,
   size?: number,
   search: string,
+
+  // page-related params, don't get passed into the composable params
+  page: number,
+  size: number,
 }
 
 const getElements = async (
