@@ -22,7 +22,7 @@
 
 Let's face it: integrating backend-paginated resources into a paginated frontend **sucks**. Handling page requests, loading states and edge cases for **every resource** may very well be one of hell's worst tortures.
 
-And there is no way around it: when you have to paginate, you have to paginate. That's where **Vue Paginated Resource** comes in.
+And there is no way around it: when you have to paginate, you have to paginate. That's where **Vue Paginated Resource** comes in. With this tool, you can forget about the backend pagination and think in terms of the pages being viewed by the frontend user.
 
 ## Installation
 
@@ -94,7 +94,7 @@ This part is tricky: the options object needs to include a key named after the v
 
 The options object also needs to include any other options you need to pass to the request. These options will probably be filters for the endpoint or stuff like that.
 
-Finally, the adapter needs to return an promise that resolves into an object with a `total` key (the total amount of elements in the backend) and an `elements` key (an array of the elements present in the requested page).
+Finally, the adapter needs to return an promise that resolves into an object with a `total` key (the total amount of elements in the backend) and an `elements` key (an array of the elements **present in the requested page**).
 
 Using our previous composable configuration, let's write the API adapter (in our example, the API always returns an object with a `total` key and an `items` key, but sometimes APIs return the total amount of elements using a header):
 
@@ -127,6 +127,71 @@ export const getResource = (options: Options): AdapterResponse => {
 ```
 
 Notice that in this example we simply pass the `options` object to the params of the request, but you can process them however you like inside the adapter. Same goes to the response of the API.
+
+### Using Vue Paginated Resource
+
+Now that you created the composable and the API adapter, you are ready to use **Vue Paginated Endpoint**. You first need to define a variable for the current page (**as a `Ref`**) and the parameters that are **not backend page related**:
+
+```vue
+<!-- src/views/ResourceDashboard.vue -->
+<script setup lang="ts">
+import { reactive, ref } from 'vue';
+
+const page = ref(1);
+const params = reactive({ search: '' });
+</script>
+```
+
+Notice that the `params` variable corresponds to **a `reactive` object** that contains the same attributes as the API adapter method's options object except for the backend page related keys (in our case, `page-number` and `size`), so we are left with only `search`.
+
+You will also need to define a method to reset the page to the first one. This is useful if you need to change something other than the pagination stuff on resetting the pagination:
+
+```vue
+<!-- src/views/ResourceDashboard.vue -->
+<script setup lang="ts">
+import { reactive, ref } from 'vue';
+
+const page = ref(1);
+const params = reactive({ search: '' });
+
+const resetPage = () => {
+  // maybe do something
+  page.value = 1;
+  // maybe do some other thing
+}
+</script>
+```
+
+**Make sure to move the value of the page to the first page**, or **Vue Paginated Resource** won't work as expected.
+
+Finally, you can use the composable:
+
+```vue
+<script setup lang="ts">
+import { reactive, ref } from 'vue';
+import { getResource } from 'src/adapters/resource';
+import { usePaginatedResource } from 'src/adapters/resource';
+
+const page = ref(1);
+const params = reactive({ search: '' });
+
+const resetPage = () => {
+  // maybe do something
+  page.value = 1;
+  // maybe do some other thing
+}
+
+const { ... } = usePaginatedResource(getResource, page, resetPage, params);
+</script>
+```
+
+We will discuss the values returned by the `usePaginatedResource` method later.
+
+Notice that we passed the `page` attribute **as a `Ref`** without unwrapping it. We also passed `params` **as a `reactive` object**.
+
+Changing the value of `page.value` from the component will (reactively) update the values returned from the `usePaginatedResource` method. That is your main way of navigation, between pages.
+
+Changing the value of one of the `params`'s attributes **will call the `resetPage` method and re-do every request using the new parameters**. That's why having an "_apply_" button is highly recommended, as dynamically changing the values of the `params` will make a ton of requests to the API and might introduce some unexpected bugs.
 
 ## Complete Basic Example
 
