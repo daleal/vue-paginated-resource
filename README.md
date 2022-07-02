@@ -1,6 +1,28 @@
-# Vue Paginated Resource
+<h1 align="center">Vue Paginated Resource</h1>
 
-The pagination library designed for living beings
+<p align="center">
+  <em>
+    The Vue pagination library <strong>designed for living beings</strong> 😵
+  </em>
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/vue-paginated-resource" target="_blank">
+    <img src="https://img.shields.io/npm/v/vue-paginated-resource?label=version&logo=nodedotjs&logoColor=%23fff&color=f92e61" alt="NPM - Version">
+  </a>
+
+  <a href="https://github.com/daleal/vue-paginated-resource/actions?query=workflow%3Alinters" target="_blank">
+    <img src="https://img.shields.io/github/workflow/status/daleal/vue-paginated-resource/linters?label=linters&logo=github" alt="Linters">
+  </a>
+</p>
+
+**Vue Paginated Resource** is a tool that helps you consume a paginated resource endpoint and display its contents on a paginated fashion in your frontend, leaving the coordination heavy lifting out of your way.
+
+## Why Vue Paginated Resource?
+
+Let's face it: integrating backend-paginated resources into a paginated frontend **sucks**. Handling page requests, loading states and edge cases for **every resource** may very well be one of hell's worst tortures.
+
+And there is no way around it: when you have to paginate, you have to paginate. That's where **Vue Paginated Resource** comes in.
 
 ## Installation
 
