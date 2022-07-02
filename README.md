@@ -16,13 +16,13 @@
   </a>
 </p>
 
-**Vue Paginated Resource** is a tool that helps you consume a paginated resource endpoint and display its contents on a paginated fashion in your frontend, leaving the coordination heavy lifting out of your way.
+**Vue Paginated Resource** is a tool that helps you consume a paginated resource endpoint and display its contents in a paginated fashion in your frontend, leaving the coordination heavy lifting between the backend and the frontend out of your way.
 
 ## Why Vue Paginated Resource?
 
 Let's face it: integrating backend-paginated resources into a paginated frontend **sucks**. Handling page requests, loading states and edge cases for **every resource** may very well be one of hell's worst tortures.
 
-And there is no way around it: when you have to paginate, you have to paginate. That's where **Vue Paginated Resource** comes in. With this tool, you can forget about the backend pagination and think in terms of the pages being viewed by the frontend user.
+And there is no way around it: when you have to paginate, you have to paginate. That's where **Vue Paginated Resource** comes in. With this tool, you can forget about the backend pagination and just handle the page being displayed on the screen. We will handle the rest.
 
 ## Installation
 
