@@ -62,8 +62,8 @@ interface Options {
 Its parameters are:
 
 - `frontend.pageSize`: The size of each page displayed in your application's frontend. This key is **required**
-- `backend.requestKeys.page`: The name of the key used to request a specific page to the backend. This generally translates to a query param, so if the request looks like `https://resource.com/some/resource?page-number=3`, then `backend.requestKeys.page` should be `page-number`. This key is **optional**, and its value defaults to `page`.
-- `backend.requestKeys.pageSize`: The name of the key used to request a specific page size to the backend. This generally translates to a query param, so if the request looks like `https://resource.com/some/resource?size=3`, then `backend.requestKeys.pageSize` should be `size`. This key is **optional**. If the key is not defined, **Vue Paginated Resource** won't specify a page size to the backend.
+- `backend.requestKeys.page`: The name of the key used to request a specific page to the backend. This generally translates to a query param, so if the request looks like `https://some.url/resource?page-number=3`, then `backend.requestKeys.page` should be `page-number`. This key is **optional**, and its value defaults to `page`.
+- `backend.requestKeys.pageSize`: The name of the key used to request a specific page size to the backend. This generally translates to a query param, so if the request looks like `https://some.url/resource?size=3`, then `backend.requestKeys.pageSize` should be `size`. This key is **optional**. If the key is not defined, **Vue Paginated Resource** won't specify a page size to the backend.
 - `backend.pageSize`: The size of each page from the backend's resource endpoint. This key is **optional**. You should **always** define a value for `backend.pageSize` if `backend.requestKeys.pageSize` was specified. You should **never** define a value for `backend.pageSize` if `backend.requestKeys.pageSize` was not specified.
 
 To create the composable, first create a composable file and use code similar to the following:
@@ -119,7 +119,7 @@ interface Options {
 
 export const getResource = (options: Options): AdapterResponse => {
   const response = await axios.get(
-    'https://resource.com/some/resource',
+    'https://some.url/resource',
     { params: options },
   );
   return { total: response.data.total, elements: response.data.items };
@@ -167,6 +167,7 @@ const resetPage = () => {
 Finally, you can use the composable:
 
 ```vue
+<!-- src/views/ResourceDashboard.vue -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import { getResource } from 'src/adapters/resource';
@@ -192,6 +193,39 @@ Notice that we passed the `page` attribute **as a `Ref`** without unwrapping it.
 Changing the value of `page.value` from the component will (reactively) update the values returned from the `usePaginatedResource` method. That is your main way of navigation, between pages.
 
 Changing the value of one of the `params`'s attributes **will call the `resetPage` method and re-do every request using the new parameters**. That's why having an "_apply_" button is highly recommended, as dynamically changing the values of the `params` will make a ton of requests to the API and might introduce some unexpected bugs.
+
+### Composable returns
+
+The composable returns 6 values:
+
+```vue
+<!-- src/views/ResourceDashboard.vue -->
+<script setup lang="ts">
+.
+.
+.
+
+const {
+  total,
+  pageElements,
+  loading,
+  previousPageAvailable,
+  nextPageAvailable,
+  pageLimits,
+} = usePaginatedResource(getResource, page, resetPage, params);
+
+.
+.
+.
+</script>
+```
+
+- `total`: A `Ref<number>` containing the total amount of elements are available in the backend.
+- `pageElements`: A `Ref<Array<Resource>>` containing the elements in the page currently pointed at by the composable parameter `page`.
+- `loading`: A `Ref<boolean>` indicating whether or not **Vue Paginated Resource** is loading some request. Please note that this being `true` **does not mean** that you can't go to the next page, it just means that the tool is using the network for some request (it may be used, for example, when the first page is being loaded and no resources have been loaded yet).
+- `previousPageAvailable`: A `Ref<boolean>` indicating whether or not a previous page can be accessed at the moment. This should only really be `false` when standing on the very first page, as in every other case the previous page has already been loaded and therefore can be accessed.
+- `nextPageAvailable`: A `Ref<boolean>` indicating whether or not a next page can be accessed at the moment. This could happen if the user spam-clicks the `next` button and gets to the last elements of the currently loaded resource before the next backend page arrives. After the next page arrives, `nextPageAvailable` should go back to being `true`. It could also happen if you are standing on the last possible page of the resource even for the backend.
+- `pageLimits`: A `Ref<{ firstElement: number, lastElement: number }>` indicating the index of the first element in the current page relative to the total amount of resources available, and the last element in the current page relative to the total amount of resources available.
 
 ## Complete Basic Example
 
