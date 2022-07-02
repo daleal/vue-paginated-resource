@@ -10,9 +10,7 @@ import type { PageRelatedRequestOptions, PaginatedRequestMethod } from './types/
 export const createPaginatedResourceComposable = <
   PageKeyType extends string = 'page',
   PageSizeKeyType extends string | undefined = undefined,
->(
-    composableOptions: ComposableCreationOptions<PageKeyType, PageSizeKeyType>,
-  ) => {
+>(composableOptions: ComposableCreationOptions<PageKeyType, PageSizeKeyType>) => {
   const FRONTEND_PAGE_SIZE = composableOptions.frontend.pageSize;
   const BACKEND_PAGE_SIZE = composableOptions.backend?.pageSize;
   const BACKEND_PAGE_REQUEST_KEY = composableOptions.backend?.requestKeys?.page || 'page';
@@ -24,7 +22,7 @@ export const createPaginatedResourceComposable = <
     resetPage: () => void,
     requestOptions: Omit<
       OptionsType,
-      PageKeyType | (PageSizeKeyType extends string ? NonNullable<PageSizeKeyType> : never)
+      keyof PageRelatedRequestOptions<PageKeyType, PageSizeKeyType>
     >,
   ) => {
     const elements = shallowRef<Array<ElementType>>([]);
@@ -63,9 +61,9 @@ export const createPaginatedResourceComposable = <
         [BACKEND_PAGE_REQUEST_KEY as PageKeyType]: backendPage.value,
         ...(
           BACKEND_PAGE_SIZE_REQUEST_KEY !== undefined && {
-            [
-              BACKEND_PAGE_SIZE_REQUEST_KEY as NonNullable<PageSizeKeyType>
-            ]: BACKEND_PAGE_SIZE as number,
+            [BACKEND_PAGE_SIZE_REQUEST_KEY as NonNullable<PageSizeKeyType>]: (
+              BACKEND_PAGE_SIZE as number
+            ),
           }
         ),
       };
