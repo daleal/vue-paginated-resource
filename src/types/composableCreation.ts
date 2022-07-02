@@ -1,14 +1,17 @@
-export interface ComposableCreationOptions {
+export interface ComposableCreationOptions<
+  PageKeyType extends string,
+  PageSizeKeyType extends string | undefined,
+  PageSizeType = PageSizeKeyType extends string ? number : never,
+> {
   frontend: {
     pageSize: number,
   },
   backend?: {
-    pageSize?: number,
     requestKeys?: {
       /** @defaultValue 'page' */
-      page?: string,
-      /** @defaultValue 'size' */
-      pageSize?: string,
+      page?: PageKeyType,
+      pageSize?: PageSizeKeyType,
     },
+    pageSize?: PageSizeType,
   },
 }

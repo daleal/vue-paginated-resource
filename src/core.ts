@@ -1,24 +1,29 @@
 import {
   computed, ref, shallowRef, watch,
 } from 'vue';
+import { watchReactiveObjectKeys } from '@/watchers';
 
 import type { Ref } from 'vue';
-import type { ComposableCreationOptions } from './types/composableCreation';
-import type { PaginatedRequestMethod } from './types/requests';
+import type { ComposableCreationOptions } from '@/types/composableCreation';
+import type { PageRelatedRequestOptions, PaginatedRequestMethod } from '@/types/requests';
 
-export const createPaginatedResourceComposable = (
-  composableOptions: ComposableCreationOptions,
-) => {
+export const createPaginatedResourceComposable = <
+  PageKeyType extends string = 'page',
+  PageSizeKeyType extends string | undefined = undefined,
+>(composableOptions: ComposableCreationOptions<PageKeyType, PageSizeKeyType>) => {
   const FRONTEND_PAGE_SIZE = composableOptions.frontend.pageSize;
   const BACKEND_PAGE_SIZE = composableOptions.backend?.pageSize;
   const BACKEND_PAGE_REQUEST_KEY = composableOptions.backend?.requestKeys?.page || 'page';
-  const BACKEND_PAGE_SIZE_REQUEST_KEY = composableOptions.backend?.requestKeys?.pageSize || 'size';
+  const BACKEND_PAGE_SIZE_REQUEST_KEY = composableOptions.backend?.requestKeys?.pageSize;
 
-  return <ElementType, OptionsType>(
+  return <ElementType, OptionsType extends PageRelatedRequestOptions<PageKeyType, PageSizeKeyType>>(
     paginatedRequestMethod: PaginatedRequestMethod<ElementType, OptionsType>,
     page: Ref<number>,
     resetPage: () => void,
-    requestOptions: OptionsType,
+    requestOptions: Omit<
+      OptionsType,
+      keyof PageRelatedRequestOptions<PageKeyType, PageSizeKeyType>
+    >,
   ) => {
     const elements = shallowRef<Array<ElementType>>([]);
     const loading = ref(false);
@@ -50,9 +55,22 @@ export const createPaginatedResourceComposable = (
     const requestNextPage = async () => {
       loading.value = true;
       backendPage.value += 1;
-      const internalRequestOptions = {
-        [BACKEND_PAGE_REQUEST_KEY]: backendPage.value,
-        [BACKEND_PAGE_SIZE_REQUEST_KEY]: BACKEND_PAGE_SIZE,
+
+      // @ts-expect-error: The union of the page-related keys isn't perfect
+      const pageRelatedRequestOptions: PageRelatedRequestOptions<PageKeyType, PageSizeKeyType> = {
+        [BACKEND_PAGE_REQUEST_KEY as PageKeyType]: backendPage.value,
+        ...(
+          BACKEND_PAGE_SIZE_REQUEST_KEY !== undefined && {
+            [BACKEND_PAGE_SIZE_REQUEST_KEY as NonNullable<PageSizeKeyType>]: (
+              BACKEND_PAGE_SIZE as number
+            ),
+          }
+        ),
+      };
+
+      // @ts-expect-error: The union of the `requestOptions` and the page-related keys isn't perfect
+      const internalRequestOptions: OptionsType = {
+        ...pageRelatedRequestOptions,
         ...requestOptions,
       };
       const {
@@ -68,7 +86,7 @@ export const createPaginatedResourceComposable = (
       loading.value = false;
     };
 
-    watch(() => requestOptions, () => {
+    watchReactiveObjectKeys(requestOptions, () => {
       elements.value = [];
       backendPage.value = 0;
       resetPage();
