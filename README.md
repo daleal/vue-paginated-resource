@@ -79,12 +79,54 @@ export const usePaginatedResource = createPaginatedResourceComposable({
   backend: {
     pageSize: 100,
     requestKeys: {
-      page: 'page',
+      page: 'page-number',
       pageSize: 'size',
     },
   },
 });
 ```
+
+### Creating the API adapter
+
+Now that you have the composable created, you need to create a method that receives an options object, makes the request to the API and returns the response.
+
+This part is tricky: the options object needs to include a key named after the value of the `backend.requestKeys.page` configuration of the composable. If you defined `backend.requestKeys.pageSize` in the configuration of the composable, you also need to include a key named after its value.
+
+The options object also needs to include any other options you need to pass to the request. These options will probably be filters for the endpoint or stuff like that.
+
+Finally, the adapter needs to return an promise that resolves into an object with a `total` key (the total amount of elements in the backend) and an `elements` key (an array of the elements present in the requested page).
+
+Using our previous composable configuration, let's write the API adapter (in our example, the API always returns an object with a `total` key and an `items` key, but sometimes APIs return the total amount of elements using a header):
+
+```ts
+// src/adapters/resource.ts
+import axios from 'axios';
+
+export interface Resource {
+  id: string,
+  title: string,
+  amount: number,
+  imageUrl: string,
+}
+
+type AdapterResponse = Promise<{ total: number, elements: Array<Resource> }>;
+
+interface Options {
+  'page-number': number,
+  size: number,
+  search: string,
+}
+
+export const getResource = (options: Options): AdapterResponse => {
+  const response = await axios.get(
+    'https://resource.com/some/resource',
+    { params: options },
+  );
+  return { total: response.data.total, elements: response.data.items };
+}
+```
+
+Notice that in this example we simply pass the `options` object to the params of the request, but you can process them however you like inside the adapter. Same goes to the response of the API.
 
 ## Complete Basic Example
 
