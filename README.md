@@ -227,6 +227,10 @@ const {
 - `nextPageAvailable`: A `Ref<boolean>` indicating whether or not a next page can be accessed at the moment. This could happen if the user spam-clicks the `next` button and gets to the last elements of the currently loaded resource before the next backend page arrives. After the next page arrives, `nextPageAvailable` should go back to being `true`. It could also happen if you are standing on the last possible page of the resource even for the backend.
 - `pageLimits`: A `Ref<{ firstElement: number, lastElement: number }>` indicating the index of the first element in the current page relative to the total amount of resources available, and the last element in the current page relative to the total amount of resources available.
 
+## TypeScript support
+
+**Vue Paginated Resource** is written using TypeScript, so it fully supports typing and type hinting for your code editor tooling. Every example is fully typed, so you can understand where you are supposed to declare types and where **Vue Paginated Resource** will infer them for you.
+
 ## Complete Basic Example
 
 ```ts
@@ -320,3 +324,31 @@ const {
   </div>
 </template>
 ```
+
+## Development
+
+### Testing locally
+
+Every local test should be done using the `dev` folder inside the project. You can find more detailed instructions on how to use the development environment there.
+
+To create a playground file, `cd` into the `dev` folder and copy the `VuePaginatedResourcePlayground.template.vue` into a `VuePaginatedResourcePlayground.vue` file:
+
+```sh
+cd dev
+cp src/VuePaginatedResourcePlayground.template.vue src/VuePaginatedResourcePlayground.vue
+```
+
+Now, edit the `VuePaginatedResourcePlayground.vue` file _risk free_ to try the methods you're working on:
+
+```sh
+nano src/VuePaginatedResourcePlayground.vue  # or your favorite editor
+```
+
+Finally, run `npm install` and start the playground server!
+
+```sh
+npm install
+npm run dev
+```
+
+You can see the development server running at `http://localhost:3000`.
