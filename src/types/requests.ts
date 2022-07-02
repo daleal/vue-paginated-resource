@@ -1,11 +1,3 @@
-export type PaginatedRequestMethod<
-  ElementType,
-  OptionsType,
-> = (options: OptionsType) => Promise<{
-  total: number,
-  elements: Array<ElementType>,
-}>;
-
 export type PageRelatedRequestOptions<
   PageKeyType extends string,
   PageSizeKeyType extends string | undefined,
@@ -16,3 +8,13 @@ export type PageRelatedRequestOptions<
       : Record<never, never>
   )
 )
+
+export type PaginatedRequestMethod<
+  ElementType,
+  OptionsType,
+> = (options: OptionsType) => Promise<PaginatedRequestMethodReturn<ElementType>>;
+
+export interface PaginatedRequestMethodReturn<ElementType> {
+  total: number,
+  elements: Array<ElementType>,
+}
