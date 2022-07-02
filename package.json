@@ -1,6 +1,6 @@
 {
   "name": "vue-paginated-resource",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "The Vue pagination library designed for living beings 😵",
   "repository": "https://github.com/daleal/vue-paginated-resource",
   "bugs": "https://github.com/daleal/vue-paginated-resource/issues",
