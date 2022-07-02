@@ -1,11 +1,11 @@
 import {
   computed, ref, shallowRef, watch,
 } from 'vue';
-import { keysOf } from '@/utils';
+import { watchReactiveObjectKeys } from '@/watchers';
 
 import type { Ref } from 'vue';
-import type { ComposableCreationOptions } from './types/composableCreation';
-import type { PageRelatedRequestOptions, PaginatedRequestMethod } from './types/requests';
+import type { ComposableCreationOptions } from '@/types/composableCreation';
+import type { PageRelatedRequestOptions, PaginatedRequestMethod } from '@/types/requests';
 
 export const createPaginatedResourceComposable = <
   PageKeyType extends string = 'page',
@@ -86,7 +86,7 @@ export const createPaginatedResourceComposable = <
       loading.value = false;
     };
 
-    watch(keysOf(requestOptions).map((key) => () => requestOptions[key]), () => {
+    watchReactiveObjectKeys(requestOptions, () => {
       elements.value = [];
       backendPage.value = 0;
       resetPage();
