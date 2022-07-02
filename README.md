@@ -109,7 +109,7 @@ export interface Resource {
   imageUrl: string,
 }
 
-type AdapterResponse = Promise<{ total: number, elements: Array<Resource> }>;
+type Response = Promise<{ total: number, elements: Array<Resource> }>;
 
 interface Options {
   'page-number': number,
@@ -117,7 +117,7 @@ interface Options {
   search: string,
 }
 
-export const getResource = (options: Options): AdapterResponse => {
+export const getResource = async (options: Options): Response => {
   const response = await axios.get(
     'https://some.url/resource',
     { params: options },
