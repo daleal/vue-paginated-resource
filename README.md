@@ -38,7 +38,55 @@ yarn add vue-paginated-resource
 
 Please note that **Vue Paginated Resource** will only work with **Vue 3**.
 
-## Sample Usage
+## Usage
+
+### Creating the composable
+
+Out of the box, **Vue Paginated Resource** exports a method named `createPaginatedResourceComposable`. This method receives an options object that looks like this:
+
+```ts
+interface Options {
+  frontend: {
+    pageSize: number,
+  },
+  backend?: {
+    requestKeys?: {
+      page?: string,
+      pageSize?: string,
+    },
+    pageSize?: number,
+  },
+}
+```
+
+Its parameters are:
+
+- `frontend.pageSize`: The size of each page displayed in your application's frontend. This key is **required**
+- `backend.requestKeys.page`: The name of the key used to request a specific page to the backend. This generally translates to a query param, so if the request looks like `https://resource.com/some/resource?page-number=3`, then `backend.requestKeys.page` should be `page-number`. This key is **optional**, and its value defaults to `page`.
+- `backend.requestKeys.pageSize`: The name of the key used to request a specific page size to the backend. This generally translates to a query param, so if the request looks like `https://resource.com/some/resource?size=3`, then `backend.requestKeys.pageSize` should be `size`. This key is **optional**. If the key is not defined, **Vue Paginated Resource** won't specify a page size to the backend.
+- `backend.pageSize`: The size of each page from the backend's resource endpoint. This key is **optional**. You should **always** define a value for `backend.pageSize` if `backend.requestKeys.pageSize` was specified. You should **never** define a value for `backend.pageSize` if `backend.requestKeys.pageSize` was not specified.
+
+To create the composable, first create a composable file and use code similar to the following:
+
+```ts
+// src/composables/paginatedResource.ts
+import { createPaginatedResourceComposable } from 'vue-paginated-resource';
+
+export const usePaginatedResource = createPaginatedResourceComposable({
+  frontend: {
+    pageSize: 15,
+  },
+  backend: {
+    pageSize: 100,
+    requestKeys: {
+      page: 'page',
+      pageSize: 'size',
+    },
+  },
+});
+```
+
+## Complete Basic Example
 
 ```ts
 // composables/paginatedResource.ts
