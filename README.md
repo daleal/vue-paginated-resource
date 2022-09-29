@@ -298,7 +298,7 @@ const {
   pageElements,
   previousPageAvailable,
   nextPageAvailable,
-} = useResourcePagination(getElements, page, resetPage, params);
+} = usePaginatedResource(getElements, page, resetPage, params);
 </script>
 
 <template>
